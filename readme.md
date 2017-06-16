@@ -25,9 +25,10 @@
 ### 限制
 1. 由于没有做错误处理，如果命令行参数数量不够，或者没有那个文件，脚本就会运行失败
 2. 一个.java文件只能有一个类的定义（有非public类也不行）
-3. .java文件格式需要经过format， 使用IntelliJ的默认代码格式，其他格式未作任何测试，不保证生成代码的效果
-4. .java文件中，类的第一个非static属性作为主键
-5. 类的static属性会被忽略
+3. 字段解析按照字段名称进行，不考虑类型；不支持实体类的关联
+4. .java文件格式需要经过format， 使用IntelliJ的默认代码格式，其他格式未作任何测试，不保证生成代码的效果
+5. .java文件中，类的第一个非static属性作为主键
+6. 类的static属性会被忽略
 
 ## 实例
 
@@ -47,8 +48,6 @@ public class User {
     private String password;
 
     private int state;
-
-    private Role role;
 
     public User() {
     }
@@ -74,7 +73,6 @@ public class User {
         return password;
     }
 
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -89,14 +87,6 @@ public class User {
 
     public void setState(int state) {
         this.state = state;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     @Override
@@ -118,8 +108,7 @@ public class User {
         return "User{" +
                 "userId=" + userId +
                 ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
+                ", password='" + password +
                 '}';
     }
 }
@@ -138,9 +127,9 @@ import java.util.List;
 public interface UserMapper {
 
     @Insert("INSERT INTO user " +
-            "( user_id, user_name, password, state, role ) " +
+            "( user_id, user_name, password, state ) " +
             "VALUES " +
-            "( #{user.userId}, #{user.userName}, #{user.password}, #{user.state}, #{user.role} )")
+            "( #{user.userId}, #{user.userName}, #{user.password}, #{user.state} )")
     void insert(@Param("user") User user);
 
     @Select("SELECT * FROM user " +
@@ -149,16 +138,14 @@ public interface UserMapper {
             @Result(property = "userId", column = "user_id", id = true),
             @Result(property = "userName", column = "user_name"),
             @Result(property = "password", column = "password"),
-            @Result(property = "state", column = "state"),
-            @Result(property = "role", column = "role")
+            @Result(property = "state", column = "state")
     })
     User queryById(@Param("userId") Integer userId);
 
     @Update("UPDATE user SET " +
             "user_name = #{user.userName}, " +
             "password = #{user.password}, " +
-            "state = #{user.state}, " +
-            "role = #{user.role} " +
+            "state = #{user.state} " +
             "WHERE userId = #{user.user_id}")
     void update(@Param("user") User user);
 
