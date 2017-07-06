@@ -29,6 +29,8 @@
 4. .java文件格式需要经过format， 使用IntelliJ的默认代码格式，其他格式未作任何测试，不保证生成代码的效果
 5. .java文件中，类的第一个非static属性作为主键
 6. 类的static属性会被忽略
+7. 仅支持`private`和`protected`属性
+8. 无`private`和`protected`属性的实体类未作异常处理，会报数组越界错误
 
 ## 实例
 

@@ -56,6 +56,13 @@ def parse_content(entity_name, table_name, content):
             field_camel_name_list.append(field_name)
             field_name_map[field_name] = convert_camel_to_under_score(field_name)
             field_type_map[field_name] = field_type
+        elif line.strip().startswith('protected') and not line.strip().startswith('private static'):
+            # 抽取属性，生成属性名表
+            field_type = line[line.index('protected') + 10:line.rindex(' ')]
+            field_name = line[line.index(field_type) + len(field_type) + 1: line.rindex(';')]
+            field_camel_name_list.append(field_name)
+            field_name_map[field_name] = convert_camel_to_under_score(field_name)
+            field_type_map[field_name] = field_type
 
     result = append_line(result, gen_insert_method(entity_name, table_name, field_camel_name_list, field_name_map,
                                                    field_type_map))
